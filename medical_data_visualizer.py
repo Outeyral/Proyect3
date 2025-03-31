@@ -10,7 +10,7 @@ df = pd.read_csv('medical_examination.csv')
 df['overweight'] = (df['weight'] / (df['height'] / 100)**2) > 25
 df['overweight'] = df['overweight'].astype(int)
 
-# Normlize cholesterol and gluc
+# Normalize cholesterol and gluc
 df['cholesterol'] = (df['cholesterol'] > 1).astype(int)
 df['gluc'] = (df['gluc'] > 1).astype(int)
 
