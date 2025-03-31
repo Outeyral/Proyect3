@@ -3,26 +3,26 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1
+# Load Dataset
 df = pd.read_csv('medical_examination.csv')
 
-# 2
+# Calculate BMI and determine if person is overweight
 df['overweight'] = (df['weight'] / (df['height'] / 100)**2) > 25
 df['overweight'] = df['overweight'].astype(int)
 
-# 3
+# Normlize cholesterol and gluc
 df['cholesterol'] = (df['cholesterol'] > 1).astype(int)
 df['gluc'] = (df['gluc'] > 1).astype(int)
 
-# 4
+# Create Categoric Plot
 def draw_cat_plot():
-    # 5
+    # Transform data in long format
     df_cat = pd.melt(df, id_vars=['cardio'], value_vars=['cholesterol', 'gluc', 'smoke', 'alco', 'active', 'overweight'])
 
-    # 6
+    # Group by cardio, variable and value
     df_cat = df_cat.groupby(['cardio', 'variable', 'value']).size().reset_index(name='total')
     
-    # 7
+    # Create Cat Plot with Seaborn
     fil = sns.catplot(
         x="variable",
         y="total",
@@ -32,18 +32,18 @@ def draw_cat_plot():
         kind="bar"
     )
 
-    # 8
+    # Variable fig
     fig = fil.fig
 
 
-    # 9
+    # Download and return figure
     fig.savefig('catplot.png')
     return fig
 
 
-# 10
+# Create Heat Map
 def draw_heat_map():
-    # 11
+    # Clean data with logical conditions
     df_heat = df[
         (df['ap_lo'] <= df['ap_hi']) &
         (df['height'] >= df['height'].quantile(0.025)) &
@@ -51,18 +51,18 @@ def draw_heat_map():
         (df['weight'] >= df['weight'].quantile(0.025)) &
         (df['weight'] <= df['weight'].quantile(0.975))]
 
-    # 12
+    # Calculate correlation matrix
     corr = df_heat.corr()
 
-    # 13
+    # Create mask for upper half of heat map
     mask = np.triu(np.ones_like(corr, dtype=bool))
 
-    # 14
+    # Config Matplotlib fig
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # 15
+    # Draw heat map with Seaborn
     sns.heatmap(corr, mask=mask, annot=True, fmt='.1f', cmap='coolwarm', center=0)
 
-    # 16
+    # Download and return fig
     fig.savefig('heatmap.png')
     return fig
